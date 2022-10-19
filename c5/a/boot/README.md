@@ -1,4 +1,5 @@
 ### 执行步骤：
-1、nasm -o mbr.bin mbr.S && dd if=./mbr.bin of=../../bochs-2.6.2/hd60M.img bs=512 count=1  conv=notrunc
-2、bin/bochs -f bochsrc.disk
-3、选择选项6，按下按键c
+1、修改bochsrc.disk设置内容 megs:32
+2、sh build.sh
+3、进入项目下bochs目录，执行 bin/bochs -f bochsrc.disk
+4、选择选项6，按下按键c
