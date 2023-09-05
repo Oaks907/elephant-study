@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="win32">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/bochs-2.6.2/build/win32/vs2008ex-plugins-workspace.zip!/" />
+      <root url="jar://$PROJECT_DIR$/bochs-2.6.2/build/win32/vs2008ex-workspace.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
