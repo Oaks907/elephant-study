@@ -36,7 +36,7 @@
 
    loader_start:
 
-;-------  int 15h eax = 0000E820h ,edx = 534D4150h ('SMAP') 获取内存布局  -------
+;-------  int 15h eax = 0000E820h ,edx = 534D4150h ('SMAP') 获取内存布局 ,虚拟地址为： [0x000000000c00]  -------
 
    xor ebx, ebx		      ;第一次调用时，ebx值要为0
    mov edx, 0x534d4150	      ;edx只赋值一次，循环体中不会改变
