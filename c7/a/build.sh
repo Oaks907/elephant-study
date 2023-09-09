@@ -1,7 +1,7 @@
 nasm -I ./boot/include/ -o ./build/mbr.bin ./boot/mbr.S
 dd if=./build/mbr.bin of=../../bochs-2.6.2/hd60M.img bs=512 count=1  conv=notrunc
 nasm -I ./boot/include/ -o ./build/loader.bin ./boot/loader.S
-dd if=./loader.bin of=../../bochs-2.6.2/hd60M.img bs=512 count=3 seek=2 conv=notrunc
+dd if=./build/loader.bin of=../../bochs-2.6.2/hd60M.img bs=512 count=3 seek=2 conv=notrunc
 
 gcc -I lib/kernel/ -I lib/ -I kernel/ -m32 -c -fno-builtin -o build/main.o kernel/main.c
 nasm -f elf -o build/print.o ../lib/kernel/print.S
