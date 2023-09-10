@@ -61,7 +61,6 @@ clean:
 build: $(BUILD_DIR)/kernel.bin
 
 after:
-	cd ../../bochs-2.6.2/;
-	echo '启动Bochs命令：bochs-2.6.2/';
+	@echo '启动Bochs命令:bin/bochs -f bochsrc.disk';
 
 all: mk_dir build hd after
