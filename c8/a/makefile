@@ -43,15 +43,15 @@ $(BUILD_DIR)/print.o: lib/kernel/print.S
 $(BUILD_DIR)/kernel.bin: $(OBJS)
 	$(LD) $(LDFLAGS) $^ -o $@
 
-.PHONY : mk_dir hd clean all
+.PHONY : mk_dir hd clean all after
 
 mk_dir:
 	if [[ ! -d $(BUILD_DIR) ]];then mkdir $(BUILD_DIR);fi
 
 hd:
-	AS -I ./boot/include/ -o $(BUILD_DIR)/mbr.bin ./boot/mbr.S;
+	$(AS) -I ./boot/include/ -o $(BUILD_DIR)/mbr.bin ./boot/mbr.S;
 	dd if=$(BUILD_DIR)/mbr.bin of=../../bochs-2.6.2/hd60M.img bs=512 count=1  conv=notrunc;
-	AS -I ./boot/include/ -o $(BUILD_DIR)/loader.bin ./boot/loader.S;
+	$(AS) -I ./boot/include/ -o $(BUILD_DIR)/loader.bin ./boot/loader.S;
 	dd if=$(BUILD_DIR)/loader.bin of=../../bochs-2.6.2/hd60M.img bs=512 count=3 seek=2 conv=notrunc;
 	dd if=$(BUILD_DIR)/kernel.bin of=../../bochs-2.6.2/hd60M.img bs=512 count=200 seek=9 conv=notrunc;
 
@@ -60,4 +60,8 @@ clean:
 
 build: $(BUILD_DIR)/kernel.bin
 
-all: mk_dir build hd
+after:
+	cd ../../bochs-2.6.2/;
+	echo '启动Bochs命令：bochs-2.6.2/';
+
+all: mk_dir build hd after
