@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2023-09-20T14:51:14.750Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36" etag="vM6m8jULn3Zlu9qeJRmg" version="21.7.5" type="github">
+<mxfile host="app.diagrams.net" modified="2023-09-20T15:58:36.782Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36" etag="f3qRtFMYo6hX2I6zJJWf" version="21.7.5" type="github">
   <diagram name="Page-1" id="12NWxGoQr25tVnfTjV8N">
-    <mxGraphModel dx="2074" dy="2326" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2901" dy="2326" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -123,6 +123,33 @@
         </mxCell>
         <mxCell id="1wO0rDWPHwuriIPUTUys-50" value="&lt;font color=&quot;#ff3333&quot; style=&quot;font-size: 15px;&quot;&gt;&lt;b&gt;实模式下1MB内存布局&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="270" y="-572" width="180" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1wO0rDWPHwuriIPUTUys-55" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="540" y="-450" width="20" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="1wO0rDWPHwuriIPUTUys-56" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;开机第一站地址：CPU&lt;span style=&quot;border-color: var(--border-color); text-align: left; font-size: 14px; font-family: 宋体, monospace;&quot;&gt;的&lt;/span&gt;&lt;span style=&quot;border-color: var(--border-color); text-align: left; background-color: rgb(255, 255, 255); font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace; font-size: 14px;&quot;&gt;CS&lt;/span&gt;&lt;span style=&quot;border-color: var(--border-color); text-align: left; font-size: 14px; font-family: 宋体, monospace;&quot;&gt;：&lt;/span&gt;&lt;span style=&quot;border-color: var(--border-color); text-align: left; background-color: rgb(255, 255, 255); font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace; font-size: 14px;&quot;&gt;IP&lt;/span&gt;&lt;span style=&quot;border-color: var(--border-color); text-align: left; font-size: 14px; font-family: 宋体, monospace;&quot;&gt;寄存器被强制初始化为&lt;/span&gt;&lt;span style=&quot;border-color: var(--border-color); text-align: left; background-color: rgb(255, 255, 255); font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace; font-size: 14px;&quot;&gt;&amp;nbsp;0xF000:0xFFF0&lt;/span&gt;&lt;span style=&quot;border-color: var(--border-color); text-align: left; font-size: 14px; font-family: 宋体, monospace;&quot;&gt;，对应内存地址为&lt;/span&gt;&lt;span style=&quot;border-color: var(--border-color); text-align: left; background-color: rgb(255, 255, 255); font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace; font-size: 14px;&quot;&gt;&amp;nbsp;0xFFFF0。&lt;br style=&quot;font-size: 14px;&quot;&gt;随后跳转到0xFE05b位置后，开始执行BIOS程序&lt;br style=&quot;font-size: 14px;&quot;&gt;&lt;/span&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#FF3333;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="560" y="-455" width="660" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="1wO0rDWPHwuriIPUTUys-57" value="jmp f000：e05b 对应地址为&lt;br&gt;f000 &amp;lt; 4 + e05b = 0xfe05b" style="whiteSpace=wrap;html=1;shape=mxgraph.basic.roundRectCallout;dx=30;dy=15;size=5;boundedLbl=1;" vertex="1" parent="1">
+          <mxGeometry x="550" y="-542" width="330" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="1wO0rDWPHwuriIPUTUys-59" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="540" y="-395" width="20" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="1wO0rDWPHwuriIPUTUys-61" value="这里是BIOS程序，会进行检测内存、显卡等外设信息，当检测通过，并初始化硬件好后，开始在内存0x000 ~ 0x3FF外建立数据结构中断向量表并填写中断例程。&lt;br style=&quot;font-size: 14px;&quot;&gt;BIOS 最后一项工作是校验启动盘中位于 0 盘 0 道 1 扇区的内容，如果此扇区末尾两个字节为0x55和0xaa,BIOS便认为此扇区存在可执行程序，便加载到地址0x7c00" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#FF3333;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="560" y="-400" width="1030" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="1wO0rDWPHwuriIPUTUys-64" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="530" y="360" width="20" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="1wO0rDWPHwuriIPUTUys-65" value="&lt;font style=&quot;font-size: 14px;&quot; color=&quot;#ff3333&quot;&gt;BIOS完成后跳转到该位置 0x7c00&lt;br&gt;代码中的MBR代码会被nasm编译为 mbr.bin, 然后手动写入到hd60M中 0盘0道1扇区 ，算是写入了硬件。左图是内存中形式&lt;br&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="560" y="355" width="780" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="1wO0rDWPHwuriIPUTUys-66" value="&lt;font color=&quot;#ff3333&quot; style=&quot;font-size: 20px;&quot;&gt;1KB = 0x400 32KB = 0x8000&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="80" y="-760" width="280" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="1wO0rDWPHwuriIPUTUys-67" value="&lt;font color=&quot;#ff3333&quot;&gt;程序执行方向&lt;/font&gt;" style="shape=singleArrow;direction=north;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-230" y="-275" width="150" height="600" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
