@@ -14,6 +14,9 @@
 4. make
 5. make install
 6. 编辑 bochsrc.disk注意修改其中的绝对路径
+
+
+### 注意修改 romimage、vgaromimage、keyboard_mapping 对应的值为自己的代码路径
 ```shell
 megs: 32
 
