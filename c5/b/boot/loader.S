@@ -191,8 +191,8 @@ setup_page:
 ;开始创建页目录项(PDE)
 .create_pde:				     ; 创建Page Directory Entry
    mov eax, PAGE_DIR_TABLE_POS
-   add eax, 0x1000 			     ; 此时eax为第一个页表的位置及属性
-   mov ebx, eax				     ; 此处为ebx赋值，是为.create_pte做准备，ebx为基址。
+   add eax, 0x1000 			     ; 此时eax为第一个页表的位置及属性，此时eax的值为 0x00101000
+   mov ebx, eax				     ; 此处为ebx赋值，是为.create_pte做准备，ebx为基址。ebx为 0x00101000
 
 ;   下面将页目录项0和0xc00都存为第一个页表的地址，
 ;   一个页表可表示4MB内存,这样0xc03fffff以下的地址和0x003fffff以下的地址都指向相同的页表，
@@ -201,7 +201,7 @@ setup_page:
    mov [PAGE_DIR_TABLE_POS + 0x0], eax       ; 第1个目录项,在页目录表中的第1个目录项写入第一个页表的位置(0x101000)及属性(7)
    mov [PAGE_DIR_TABLE_POS + 0xc00], eax     ; 一个页表项占用4字节,0xc00表示第768个页表占用的目录项,0xc00以上的目录项用于内核空间,
 					     ; 也就是页表的0xc0000000~0xffffffff共计1G属于内核,0x0~0xbfffffff共计3G属于用户进程.
-   sub eax, 0x1000
+   sub eax, 0x1000  ;此时 eax为 0x100007
    mov [PAGE_DIR_TABLE_POS + 4092], eax	     ; 使最后一个目录项指向页目录表自己的地址
 
 ;下面创建页表项(PTE)
@@ -216,7 +216,7 @@ setup_page:
 
 ;创建内核其它页表的PDE
    mov eax, PAGE_DIR_TABLE_POS
-   add eax, 0x2000 		     ; 此时eax为第二个页表的位置
+   add eax, 0x2000 		     ; 此时eax为第二个页表的位置，此时eax为 0x102000
    or eax, PG_US_U | PG_RW_W | PG_P  ; 页目录项的属性US,RW和P位都为1
    mov ebx, PAGE_DIR_TABLE_POS
    mov ecx, 254			     ; 范围为第769~1022的所有目录项数量
