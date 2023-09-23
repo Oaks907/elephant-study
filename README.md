@@ -20,6 +20,16 @@
 | sp  | 栈指针寄存器（stack pointer）      | 其段基址是SS，用来指向栈顶。随着栈中数据的进出，push、pop操作会修改sp的值                                                                                                                                                        |
 | bp  | 基址寄存器（base pointer）        | 访问栈有两种方式，一种是push、pop指令操作栈，sp指针的值会自动更新，但我们只能获取到栈顶sp指针指向的数据。很多时候，我们需要读写在栈顶与栈底之间的数据。处理器为了让开发人员方便控制栈中数据，还提供了把栈当成数据段来访问的方式，既提供了寄存器bp，所以bp默认的寄存器就是SS，可通过SS:bp的方式将栈当作普通的数据段来访问，只不过bp不像sp那样随着push、pop自动改变 |
 
+##指令
+
+CPU前进的方向永远是 CS：IP这，两个寄存器，CS寄存器是代码段段基址，IP寄存器是代码段的段内偏移地址，CS * 16 + IP 就是CPU执行指令的内存地址。
+
+ret: 在栈顶（寄存器ss:sp所指向的地址）弹出2字节的内容来替换IP寄存器，ret指令不管里面的内容是什么，它只负责将当前栈顶的内容弹出栈，并用他为IP寄存器赋值。
+
+ref：同上，不过是弹出4字节
+
+call：call指令会在栈中留下返回地址（IP寄存器的值）
+
 ## Bochs常用调试命令
 
 | 作用                | 命令            | 示例                |
@@ -36,5 +46,35 @@
 | 反汇编一段内存           | 	u start end	 | u 0x30400 0x3040d |
 | 反汇编执行的每一条指令	      | trace-on	     | trace-on          |
 | 每执行一条指令就打印 CPU 信息 | 	trace-reg    | 	trace-reg        |
+
+## 函数调用
+
+```shell
+int subtract（int a, int b）; // 被调用者
+int sub = subtract(3, 2); // 主调用者
+```
+
+主调用者：
+```shell
+; 从右至左将参数入栈
+push 2
+push 3
+call substract
+add esp, 8
+```
+
+被调用者
+```shell
+push ebp
+mov ebp, esp
+mov eax,[ebp + 0x8]
+add eax,[ebp + 0xc]
+
+mov esp, ebp
+
+pop ebp
+ret
+```
+
 
 
