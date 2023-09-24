@@ -7,7 +7,7 @@
 
 /* 将位图btmp初始化 */
 void bitmap_init(struct bitmap* btmp) {
-   memset(btmp->bits, 0, btmp->btmp_bytes_len);
+   memset(btmp->bits, 0, btmp->btmp_bytes_len);   
 }
 
 /* 判断bit_idx位是否为1,若为1则返回true，否则返回false */
@@ -27,7 +27,7 @@ int bitmap_scan(struct bitmap* btmp, uint32_t cnt) {
    }
 
    ASSERT(idx_byte < btmp->btmp_bytes_len);
-   if (idx_byte == btmp->btmp_bytes_len) {  // 若该内存池找不到可用空间
+   if (idx_byte == btmp->btmp_bytes_len) {  // 若该内存池找不到可用空间		
       return -1;
    }
 
@@ -35,10 +35,10 @@ int bitmap_scan(struct bitmap* btmp, uint32_t cnt) {
   * 在该字节内逐位比对,返回空闲位的索引。*/
    int idx_bit = 0;
  /* 和btmp->bits[idx_byte]这个字节逐位对比 */
-   while ((uint8_t)(BITMAP_MASK << idx_bit) & btmp->bits[idx_byte]) {
+   while ((uint8_t)(BITMAP_MASK << idx_bit) & btmp->bits[idx_byte]) { 
 	 idx_bit++;
    }
-
+	 
    int bit_idx_start = idx_byte * 8 + idx_bit;    // 空闲位在位图内的下标
    if (cnt == 1) {
       return bit_idx_start;
@@ -59,7 +59,7 @@ int bitmap_scan(struct bitmap* btmp, uint32_t cnt) {
 	 bit_idx_start = next_bit - cnt + 1;
 	 break;
       }
-      next_bit++;
+      next_bit++;          
    }
    return bit_idx_start;
 }
