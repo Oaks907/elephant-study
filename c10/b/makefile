@@ -89,7 +89,7 @@ mk_dir:
 	if [ ! -d $(BUILD_DIR) ];then mkdir $(BUILD_DIR);fi
 
 mk_img:
-	if [ ! -e ./../bochs-2.6.2/$(DISK_IMG) ];then ./../bochs-2.6.2/bin/bximage -hd -mode="flat" -size=60 -q $(DISK_IMG);fi
+	if [ ! -e ../../bochs-2.6.2/$(DISK_IMG) ];then ../../bochs-2.6.2/bin/bximage -hd -mode="flat" -size=60 -q ../../bochs-2.6.2/$(DISK_IMG);fi
 
 hd:
 	$(AS) -I ./boot/include/ -o $(BUILD_DIR)/mbr.bin ./boot/mbr.S;
