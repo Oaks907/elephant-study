@@ -1,4 +1,5 @@
 BUILD_DIR = ./build
+DISK_IMG = hd60M.img
 ENTRY_POINT = 0xc0001500
 AS = nasm
 CC = gcc
@@ -75,7 +76,10 @@ $(BUILD_DIR)/kernel.bin: $(OBJS)
 .PHONY : mk_dir hd clean all after
 
 mk_dir:
-	if [[ ! -d $(BUILD_DIR) ]];then mkdir $(BUILD_DIR);fi
+	if [ ! -d $(BUILD_DIR) ];then mkdir $(BUILD_DIR);fi
+
+mk_img:
+	if [ ! -e ./../bochs-2.6.2/$(DISK_IMG) ];then ./../bochs-2.6.2/bin/bximage -hd -mode="flat" -size=60 -q $(DISK_IMG);fi
 
 hd:
 	$(AS) -I ./boot/include/ -o $(BUILD_DIR)/mbr.bin ./boot/mbr.S;
@@ -92,4 +96,4 @@ build: $(BUILD_DIR)/kernel.bin
 after:
 	@echo '启动Bochs命令:bin/bochs -f bochsrc.disk';
 
-all: mk_dir build hd after
+all: mk_dir mk_img build hd after
