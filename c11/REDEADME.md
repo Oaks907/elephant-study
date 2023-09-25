@@ -12,3 +12,12 @@ GDT[0x05]=Code segment, base=0x00000000, limit=0xffffffff, Execute-Only, Non-Con
 GDT[0x06]=Data segment, base=0x00000000, limit=0xffffffff, Read/Write
 You can list individual entries with 'info gdt [NUM]' or groups with 'info gdt [NUM] [NUM]'
 ```
+
+C11 b
+
+
+### 问题1：void start_process(void* filename_)  传递个 filename_ 为什么就能执行到 filename对应的方法？
+
+
+
+### 问题2：
