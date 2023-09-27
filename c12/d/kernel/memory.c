@@ -6,11 +6,12 @@
 #include "print.h"
 #include "string.h"
 #include "sync.h"
+#include "interrupt.h"
 
 /***************  位图地址 ********************
  * 因为0xc009f000是内核主线程栈顶，0xc009e000是内核主线程的pcb.
  * 一个页框大小的位图可表示128M内存, 位图位置安排在地址0xc009a000,
- * 这样本系统最大支持4个页框的位图,即512M */
+ * 这样本系统最大支持4个页框的位图,即512M内存 */
 #define MEM_BITMAP_BASE 0xc009a000
 /*************************************/
 
@@ -28,6 +29,16 @@ struct pool {
    struct lock lock;		 // 申请内存时互斥
 };
 
+/* 内存仓库arena元信息 */
+struct arena {
+   struct mem_block_desc* desc;	 // 此arena关联的mem_block_desc
+/* large为ture时,cnt表示的是页框数。
+ * 否则cnt表示空闲mem_block数量 */
+   uint32_t cnt;
+   bool large;		   
+};
+
+struct mem_block_desc k_block_descs[DESC_CNT];	// 内核内存块描述符数组
 struct pool kernel_pool, user_pool;      // 生成内核内存池和用户内存池
 struct virtual_addr kernel_vaddr;	 // 此结构是用来给内核分配虚拟地址
 
@@ -177,7 +188,9 @@ void* get_kernel_pages(uint32_t pg_cnt) {
 void* get_user_pages(uint32_t pg_cnt) {
    lock_acquire(&user_pool.lock);
    void* vaddr = malloc_page(PF_USER, pg_cnt);
-   memset(vaddr, 0, pg_cnt * PG_SIZE);
+   if (vaddr != NULL) {	   // 若分配的地址不为空,将页框清0后返回
+      memset(vaddr, 0, pg_cnt * PG_SIZE);
+   }
    lock_release(&user_pool.lock);
    return vaddr;
 }
@@ -208,6 +221,7 @@ void* get_a_page(enum pool_flags pf, uint32_t vaddr) {
 
    void* page_phyaddr = palloc(mem_pool);
    if (page_phyaddr == NULL) {
+      lock_release(&mem_pool->lock);
       return NULL;
    }
    page_table_add((void*)vaddr, page_phyaddr); 
@@ -222,6 +236,7 @@ uint32_t addr_v2p(uint32_t vaddr) {
  * 去掉其低12位的页表项属性+虚拟地址vaddr的低12位 */
    return ((*pte & 0xfffff000) + (vaddr & 0x00000fff));
 }
+
 
 /* 初始化内存池 */
 static void mem_pool_init(uint32_t all_mem) {
@@ -290,10 +305,29 @@ static void mem_pool_init(uint32_t all_mem) {
    put_str("   mem_pool_init done\n");
 }
 
+/* 为malloc做准备 */
+void block_desc_init(struct mem_block_desc* desc_array) {				   
+   uint16_t desc_idx, block_size = 16;
+
+   /* 初始化每个mem_block_desc描述符 */
+   for (desc_idx = 0; desc_idx < DESC_CNT; desc_idx++) {
+      desc_array[desc_idx].block_size = block_size;
+
+      /* 初始化arena中的内存块数量 */
+      desc_array[desc_idx].blocks_per_arena = (PG_SIZE - sizeof(struct arena)) / block_size;	  
+
+      list_init(&desc_array[desc_idx].free_list);
+
+      block_size *= 2;         // 更新为下一个规格内存块
+   }
+}
+
 /* 内存管理部分初始化入口 */
 void mem_init() {
    put_str("mem_init start\n");
    uint32_t mem_bytes_total = (*(uint32_t*)(0xb00));
    mem_pool_init(mem_bytes_total);	  // 初始化内存池
+/* 初始化mem_block_desc数组descs,为malloc做准备 */
+   block_desc_init(k_block_descs);
    put_str("mem_init done\n");
 }
