@@ -336,6 +336,7 @@ void* sys_malloc(uint32_t size) {
    /* 开始分配内存块 */
       b = elem2entry(struct mem_block, free_elem, list_pop(&(descs[desc_idx].free_list)));
       memset(b, 0, descs[desc_idx].block_size);
+
       a = block2arena(b);  // 获取内存块b所在的arena
       a->cnt--;		   // 将此arena中的空闲内存块数减1
       lock_release(&mem_pool->lock);
@@ -433,6 +434,48 @@ void mfree_page(enum pool_flags pf, void* _vaddr, uint32_t pg_cnt) {
       }
    /* 清空虚拟地址的位图中的相应位 */
       vaddr_remove(pf, _vaddr, pg_cnt);
+   }
+}
+
+/* 回收内存ptr */
+void sys_free(void* ptr) {
+   ASSERT(ptr != NULL);
+   if (ptr != NULL) {
+      enum pool_flags PF;
+      struct pool* mem_pool;
+
+   /* 判断是线程还是进程 */
+      if (running_thread()->pgdir == NULL) {
+	 ASSERT((uint32_t)ptr >= K_HEAP_START);
+	 PF = PF_KERNEL; 
+	 mem_pool = &kernel_pool;
+      } else {
+	 PF = PF_USER;
+	 mem_pool = &user_pool;
+      }
+
+      lock_acquire(&mem_pool->lock);   
+      struct mem_block* b = ptr;
+      struct arena* a = block2arena(b);	     // 把mem_block转换成arena,获取元信息
+      ASSERT(a->large == 0 || a->large == 1);
+      if (a->desc == NULL && a->large == true) { // 大于1024的内存
+	 mfree_page(PF, a, a->cnt); 
+      } else {				 // 小于等于1024的内存块
+	 /* 先将内存块回收到free_list */
+	 list_append(&a->desc->free_list, &b->free_elem);
+
+	 /* 再判断此arena中的内存块是否都是空闲,如果是就释放arena */
+	 if (++a->cnt == a->desc->blocks_per_arena) {
+	    uint32_t block_idx;
+	    for (block_idx = 0; block_idx < a->desc->blocks_per_arena; block_idx++) {
+	       struct mem_block*  b = arena2block(a, block_idx);
+	       ASSERT(elem_find(&a->desc->free_list, &b->free_elem));
+	       list_remove(&b->free_elem);
+	    }
+	    mfree_page(PF, a, 1); 
+	 } 
+      }   
+      lock_release(&mem_pool->lock); 
    }
 }
 
