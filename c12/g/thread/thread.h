@@ -93,7 +93,6 @@ struct task_struct {
    struct list_elem all_list_tag;
 
    uint32_t* pgdir;              // 进程自己页表的虚拟地址
-
    struct virtual_addr userprog_vaddr;   // 用户进程的虚拟地址
    struct mem_block_desc u_block_desc[DESC_CNT];   // 用户进程内存块描述符
 
