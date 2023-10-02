@@ -32,6 +32,7 @@ static void partition_format(struct partition* part) {
    /* 超级块初始化 */
    struct super_block sb;
    sb.magic = 0x19590318;
+
    sb.sec_cnt = part->sec_cnt;
    sb.inode_cnt = MAX_FILES_PER_PART;
    sb.part_lba_base = part->start_lba;
