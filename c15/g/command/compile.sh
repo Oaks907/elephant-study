@@ -7,12 +7,12 @@ if [[ ! -d "../lib" || ! -d "../build" ]];then
    cwd=${cwd%/}
    if [[ $cwd != "command" ]];then
       echo -e "you\`d better in command dir\n"
-   fi 
+   fi
    exit
 fi
 
 BIN="prog_no_arg"
-CFLAGS="-Wall -c -fno-builtin -W -Wstrict-prototypes \
+CFLAGS="-Wall -m32 -c -fno-builtin -W -Wstrict-prototypes \
       -Wmissing-prototypes -Wsystem-headers"
 LIB="../lib/"
 OBJS="../build/string.o ../build/syscall.o \
@@ -21,7 +21,7 @@ DD_IN=$BIN
 DD_OUT="../../../bochs-2.6.2/hd60M.img"
 
 gcc $CFLAGS -I $LIB -o $BIN".o" $BIN".c"
-ld -e main $BIN".o" $OBJS -o $BIN
+ld -melf_i386 -e main $BIN".o" $OBJS -o $BIN
 SEC_CNT=$(ls -l $BIN|awk '{printf("%d", ($5+511)/512)}')
 
 if [[ -f $BIN ]];then
