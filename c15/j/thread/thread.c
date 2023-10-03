@@ -8,8 +8,9 @@
 #include "memory.h"
 #include "process.h"
 #include "stdio.h"
-#include "file.h"
+#include "console.h"
 #include "fs.h"
+#include "file.h"
 
 /* pid的位图,最大支持1024个pid */
 uint8_t pid_bitmap_bits[128] = {0};
@@ -237,6 +238,7 @@ void thread_yield(void) {
    intr_set_status(old_status);
 }
 
+
 /* 以填充空格的方式输出buf */
 static void pad_print(char* buf, int32_t buf_len, void* ptr, char format) {
    memset(buf, 0, buf_len);
@@ -299,7 +301,7 @@ static bool elem2thread_info(struct list_elem* pelem, int arg UNUSED) {
    return false;	// 此处返回false是为了迎合主调函数list_traversal,只有回调函数返回false时才会继续调用此函数
 }
 
-/* 打印任务列表 */
+ /* 打印任务列表 */
 void sys_ps(void) {
    char* ps_title = "PID            PPID           STAT           TICKS          COMMAND\n";
    sys_write(stdout_no, ps_title, strlen(ps_title));
