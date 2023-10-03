@@ -18,7 +18,7 @@ LIB="../lib/"
 OBJS="../build/string.o ../build/syscall.o \
       ../build/stdio.o ../build/assert.o"
 DD_IN=$BIN
-DD_OUT="/home/work/my_workspace/bochs/hd60M.img" 
+DD_OUT="../../../bochs-2.6.2/hd60M.img"
 
 gcc $CFLAGS -I $LIB -o $BIN".o" $BIN".c"
 ld -e main $BIN".o" $OBJS -o $BIN
