@@ -7,6 +7,8 @@
 #include "memory.h"
 #include "bitmap.h"
 #include "fs.h"
+#include "file.h"
+#include "pipe.h"
 
 /* 释放用户进程资源: 
  * 1 页表中对应的物理页
@@ -55,19 +57,26 @@ static void release_prog_resource(struct task_struct* release_thread) {
    mfree_page(PF_KERNEL, user_vaddr_pool_bitmap, bitmap_pg_cnt);
 
    /* 关闭进程打开的文件 */
-   uint8_t fd_idx = 3;
-   while(fd_idx < MAX_FILES_OPEN_PER_PROC) {
-      if (release_thread->fd_table[fd_idx] != -1) {
-	 sys_close(fd_idx);
+   uint8_t local_fd = 3;
+   while(local_fd < MAX_FILES_OPEN_PER_PROC) {
+      if (release_thread->fd_table[local_fd] != -1) {
+	 if (is_pipe(local_fd)) {
+	    uint32_t global_fd = fd_local2global(local_fd);  
+	    if (--file_table[global_fd].fd_pos == 0) {
+	       mfree_page(PF_KERNEL, file_table[global_fd].fd_inode, 1);
+	       file_table[global_fd].fd_inode = NULL;
+	    }
+	 } else {
+	    sys_close(local_fd);
+	 }
       }
-      fd_idx++;
+      local_fd++;
    }
 }
 
 /* list_traversal的回调函数,
  * 查找pelem的parent_pid是否是ppid,成功返回true,失败则返回false */
 static bool find_child(struct list_elem* pelem, int32_t ppid) {
-   /* elem2entry中间的参数all_list_tag取决于pelem对应的变量名 */
    struct task_struct* pthread = elem2entry(struct task_struct, all_list_tag, pelem);
    if (pthread->parent_pid == ppid) {     // 若该任务的parent_pid为ppid,返回
       return true;   // list_traversal只有在回调函数返回true时才会停止继续遍历,所以在此返回true
