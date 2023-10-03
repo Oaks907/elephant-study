@@ -109,14 +109,14 @@ static int32_t build_child_stack(struct task_struct* child_thread) {
 
 /* 更新inode打开数 */
 static void update_inode_open_cnts(struct task_struct* thread) {
-   int32_t local_fd = 3, global_fd = 0;
-   while (local_fd < MAX_FILES_OPEN_PER_PROC) {
-      global_fd = thread->fd_table[local_fd];
-      ASSERT(global_fd < MAX_FILE_OPEN);
-      if (global_fd != -1) {
-	 file_table[global_fd].fd_inode->i_open_cnts++;
+   int32_t fd_idx = 3, _fd_idx = 0;
+   while (fd_idx < MAX_FILES_OPEN_PER_PROC) {
+      _fd_idx = thread->fd_table[fd_idx];
+      ASSERT(_fd_idx < MAX_FILE_OPEN);
+      if (_fd_idx != -1) {
+	 file_table[_fd_idx].fd_inode->i_open_cnts++;
       }
-      local_fd++;
+      fd_idx++;
    }
 }
 
